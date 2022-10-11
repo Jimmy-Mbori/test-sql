@@ -1,0 +1,23 @@
+with
+raw_data as (select *,
+			row_number()over(partition by name order by modified desc) as index
+			from `sales_order`
+  			where territory in ('Athi River','Kawangware','Eastlands','Voi')
+			)
+select distinct a.transaction_date, 
+a.territory,
+a.sales_partner,
+a.customer,
+b.item_name,
+b.item_code,
+b.item_group,
+b.uom,
+b.qty,
+b.rate,
+count(distinct a.name) as count_sales, 
+sum (b.amount) as amount
+from raw_data a
+cross join unnest(items) b 
+where format_date('%Y%m%d', a.transaction_date) between @DS_START_DATE and @DS_END_DATE and index = 1
+group by 1,2,3,4,5,6,7,8,9,10
+order by 1,2
