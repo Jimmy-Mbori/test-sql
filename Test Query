@@ -1,9 +1,8 @@
 with
 raw_data as (select *,
-			row_number()over(partition by name order by modified desc) as index
-			from `sales_order`
-  			where territory in ('Athi River','Kawangware','Eastlands','Voi')
-			)
+		row_number()over(partition by name order by modified desc) as index
+		from `sales_order`
+		)
 select distinct a.transaction_date, 
 a.territory,
 a.sales_partner,
